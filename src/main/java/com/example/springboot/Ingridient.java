@@ -1,5 +1,7 @@
 package com.example.springboot;
 
+import lombok.Data;
+
 @Data
 public class Ingridient {
     private final String id;
