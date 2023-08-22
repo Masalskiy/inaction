@@ -3,6 +3,6 @@
     grid-template-columns: 50% 50%;
 }
 
-.ingredient-group{
-
+.validationError{
+    color:red;
 }
