@@ -1,9 +1,10 @@
 package com.example.springboot;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import com.example.springboot.Ingridient.Type;
+import com.example.springboot.Ingredient.Type;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +25,19 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/design")
 @SessionAttributes("tacoOrder")
 public class DesignTacoController {
-    private List<Ingridient> filterByType(List<Ingridient> ingridients, Type type) {
-        return ingridients.stream()
+
+    private final IngredientRepository ingredientRepository;
+
+    @Autowired
+    public DesignTacoController(IngredientRepository ingredientRepository){
+        this.ingredientRepository = ingredientRepository;
+    }
+
+    private Iterable<Ingredient> filterByType(Iterable<Ingredient> ingredients, Type type) {
+        List<Ingredient> ingredientsList = new ArrayList<Ingredient>();
+        ingredients.forEach(ingredientsList::add);
+
+        return  ingredientsList.stream()
                 .filter(x -> x.getType().equals(type))
                 .collect(Collectors.toList());
     
@@ -33,23 +45,14 @@ public class DesignTacoController {
 
     @ModelAttribute
     public void addIngredientsToModel(Model model){
-        List<Ingridient> ingridients = Arrays.asList(
-            new Ingridient("FLTO", "Flour Tortilla", Type.WRAP),
-            new Ingridient("COTO", "Corn Tortilla", Type.WRAP),
-            new Ingridient("GRBF", "Ground Beef", Type.PROTEIN),
-            new Ingridient("CARN", "Carnitas", Type.PROTEIN),
-            new Ingridient("TMTO", "Diced Tomatoes", Type.VEGGIES),
-            new Ingridient("LETC", "Lettuce", Type.VEGGIES),
-            new Ingridient("CHED", "Cheddar", Type.CHEESE),
-            new Ingridient("JACK", "Monterrey Jack", Type.CHEESE),
-            new Ingridient("SLSA", "Salsa", Type.SAUCE),
-            new Ingridient("SRCR", "Sour Cream", Type.SAUCE)
-    );
 
-        Type[] types = Ingridient.Type.values();
+        Iterable<Ingredient> ingredients = ingredientRepository.findAll();
+
+
+        Type[] types = Ingredient.Type.values();
         for(Type type : types) {
             model.addAttribute(type.toString().toLowerCase(), 
-            filterByType(ingridients, type));
+            filterByType(ingredients, type));
         }
     }
 
