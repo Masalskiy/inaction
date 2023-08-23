@@ -1,8 +1,10 @@
-package com.example.springboot;
+package com.example.springboot.model;
 
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
+
+import com.example.springboot.repository.IngredientRepository;
 
 
 @Component
